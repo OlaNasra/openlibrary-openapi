@@ -1,0 +1,333 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://openlibrary.com'
+info:
+  description: >-
+    OpenLibrary API can be used to retrieve information and search for books, authors and more. 
+  version: 1.0.0
+  title: OpenLibrary API
+  termsOfService: 'https://archive.org/about/terms.php'
+  contact:
+    email: openlibrary@archive.org
+paths:
+  /books:
+    get:
+    
+      summary: Get details about books
+      description: ''
+      parameters:
+        - name: bibkeys
+          in: query
+          required: true
+          schema:
+            type: string
+          description: >-
+            List of IDs to request the information. The API supports ISBNs,
+            LCCNs, OCLC numbers and OLIDs (Open Library IDs).
+        - name: format
+          in: query
+          required: false
+          schema:
+            type: string
+            default: javascript
+            enum:
+              - javascript
+              - json
+          description: >-
+            Optional parameter which specifies the response format. Possible
+            values are json and javascript. The default format is javascript.
+        - name: callback
+          in: query
+          required: false
+          schema:
+            type: string
+          description: >-
+            Optional parameter which specifies the name of the JavaScript
+            function to call with the result. This is considered only when the
+            format is javascript.
+        - name: jscmd
+          in: query
+          required: false
+          schema:
+            type: string
+            default: viewapi
+            enum:
+              - viewapi
+              - data
+          description: >-
+            Optional parameter to decide what information to provide for each
+            matched bib_key. Possible values are viewapi and data. The default
+            value is viewapi.
+      operationId: ''
+      responses:
+        '200':
+          description: Description
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BooksResponse'
+  /search/authors:
+    get:
+      summary: search for authors
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Description
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthorsResponse'
+  /search:
+    get:
+      summary: search for books
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: fields
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: author
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Description
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+                
+externalDocs:
+  description: See OpenLibrary API documentation
+  url: 'https://openlibrary.org/developers/api'
+components:
+  schemas:
+    SearchResponse:
+      type: object
+      properties: 
+        start:
+          type: integer
+        num_found:
+          type: integer
+        docs:
+          type: array
+          items: 
+            type: object
+            properties:
+                cover_i:
+                  type: integer
+                has_fulltext: 
+                  type: boolean
+                edition_count: 
+                  type: integer
+                title: 
+                  type: string
+                author_name:
+                  type: array
+                  items:
+                    type: string
+                first_publish_year:
+                  type: integer
+                key:
+                  type: string
+                ia:
+                  type: array
+                  items:
+                    type: string
+                author_key:
+                  type: array
+                  items:
+                    type: string
+                public_scan_b:
+                  type: boolean
+    AuthorsResponse:
+      type: object
+      properties:
+        numFound:
+          type: integer
+        start:
+          type: integer
+        numFoundExact:
+          type: boolean
+        docs:
+          type: array
+          items:
+            type: object
+            properties: 
+              key:
+                type: string
+              text:
+                type: string
+              type:
+                type: string
+              name:
+                type: string
+              alternate_names:
+                type: string
+              birth_date:
+                type: string
+              top_work: 
+                type: string
+              work_count:
+                type: integer
+              top_subjects:
+                type: string
+              version:
+                type: integer
+    BooksResponse:
+      type: object
+      additionalProperties:
+        oneOf:
+          - $ref: "#/components/schemas/BooksResponseViewApiItem"
+          - $ref: "#/components/schemas/BooksResponseDataItem"
+    BooksResponseViewApiItem:
+      type: object
+      properties:
+        bib_key:
+          type: string
+        preview:
+          type: string
+        thumbnail_url:
+          type: string
+        preview_url:
+          type: string
+        info_url:
+          type: string
+    BooksResponseDataItem:
+      type: object
+      properties:
+        url:
+          type: string
+        title:
+          type: string
+        subtitle:
+          type: string
+        number_of_pages:
+          type: integer
+        publish_date:
+          type: string
+        weight:
+          type: string
+        publishers:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+        publish_places:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+        excerpts:
+          type: array
+          items:
+            type: object
+            properties:
+              comment:
+                type: string
+              text:
+                type: string
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              title:
+                type: string
+        cover:
+          type: object
+          properties:
+            small:
+              type: string
+            medium:
+              type: string
+            large:
+              type: string
+        identifiers:
+          type: object
+          properties:
+            isbn_10:
+              type: string
+            isbn_13:
+              type: string
+            lccn:
+              type: string
+            oclc:
+              type: string
+            goodreads:
+              type: string
+        ebooks:
+          type: array
+          items:
+            type: object
+            properties:
+              preview_url:
+                type: string
+        classifications:
+          type: object
+          properties:
+            lc_classifications:
+              type: string
+            dewey_decimal_class:
+              type: string
+        subjects:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              name:
+                type: string
+        subject_places:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              name:
+                type: string
+        subject_people:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              name:
+                type: string
+        subject_times:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+              name:
+                type: string
+  links: {}
+  callbacks: {}
