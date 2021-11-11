@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "servers": [
     {
-      "url": "http://openlibrary.com"
+      "url": "https://openlibrary.com"
     }
   ],
   "info": {
@@ -15,10 +15,68 @@
     }
   },
   "paths": {
-    "/books": {
+    "/works/{OLID}": {
+      "get": {
+        "summary": "Get information about a work",
+        "description": "A Work is a logical collection of similar Editions. \"Fantastic Mr. Fox\" could be a Work which contains a Spanish translation edition, or perhaps a 2nd edition which has an additional chapter or corrections. Work metadata will include general umbrella information about a book, whereas an Edition will have a publisher, an ISBN, a book-jacket, and other specific information.",
+        "parameters": [
+          {
+            "name": "OLID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "OpenLibrary ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorksResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/books/{OLID}": {
+      "get": {
+        "summary": "Get information about a work edition",
+        "description": "A Work is a logical collection of similar Editions. \"Fantastic Mr. Fox\" could be a Work which contains a Spanish translation edition, or perhaps a 2nd edition which has an additional chapter or corrections. Work metadata will include general umbrella information about a book, whereas an Edition will have a publisher, an ISBN, a book-jacket, and other specific information.",
+        "parameters": [
+          {
+            "name": "OLID",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "OpenLibrary ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EditionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/books": {
       "get": {
         "summary": "Get details about books",
-        "description": "",
+        "description": "The Book API is a generic, flexible, configurable endpoint which allows requesting information on one or more books using ISBNs, OCLC Numbers, LCCNs and OLIDs (Open Library IDs).",
         "parameters": [
           {
             "name": "bibkeys",
@@ -67,7 +125,6 @@
             "description": "Optional parameter to decide what information to provide for each matched bib_key. Possible values are viewapi and data. The default value is viewapi."
           }
         ],
-        "operationId": "",
         "responses": {
           "200": {
             "description": "Description",
@@ -84,7 +141,7 @@
     },
     "/search/authors": {
       "get": {
-        "summary": "search for authors",
+        "summary": "Search for authors",
         "parameters": [
           {
             "name": "q",
@@ -111,7 +168,7 @@
     },
     "/search": {
       "get": {
-        "summary": "search for books",
+        "summary": "Search for books",
         "parameters": [
           {
             "name": "q",
@@ -271,6 +328,307 @@
                 },
                 "version": {
                   "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "WorksResponse": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "number"
+          },
+          "latest_revision": {
+            "type": "number"
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "author": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "type": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "publish_places": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "cover": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subject_places": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "subject_people": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "subject_times": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "created": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          },
+          "last_modified": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "EditionsResponse": {
+        "type": "object",
+        "properties": {
+          "ocaid": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "number_of_pages": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "publish_date": {
+            "type": "string"
+          },
+          "publishers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "publish_places": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "excerpts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "comment": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "covers": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "isbn_10": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isbn_13": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "local_id": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contributions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source_records": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "identifiers": {
+            "type": "object",
+            "properties": {
+              "isbn_10": {
+                "type": "string"
+              },
+              "isbn_13": {
+                "type": "string"
+              },
+              "lccn": {
+                "type": "string"
+              },
+              "oclc": {
+                "type": "string"
+              },
+              "goodreads": {
+                "type": "string"
+              }
+            }
+          },
+          "classifications": {
+            "type": "object",
+            "properties": {
+              "lc_classifications": {
+                "type": "string"
+              },
+              "dewey_decimal_class": {
+                "type": "string"
+              }
+            }
+          },
+          "subject_places": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "subject_people": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "subject_times": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
                 }
               }
             }
